@@ -1,3 +1,3 @@
-module github.com/Peeters-Jef/Web-Scraper-GO
+module webscraper
 
-go 1.22.4
+go 1.22.3
