@@ -25,7 +25,7 @@ func TestNormalizeURLStripSlash(t *testing.T) {
 }
 
 func TestNormalizeURLCapitals(t *testing.T) {
-    input := "blog.boot.dev/"
+    input := "Blog.BOot.dev"
     actual := NormalizeURL(input)
     want := "blog.boot.dev"
 
@@ -34,3 +34,12 @@ func TestNormalizeURLCapitals(t *testing.T) {
     }
 }
 
+func TestNormalizeURLRemoveQuery(t *testing.T) {
+    input := "https://duckduckgo.com/?q=easter+egg&t=ffab&ia=web"
+    actual := NormalizeURL(input)
+    want := "duckduckgo.com"
+
+    if actual != want {
+        t.Fatalf(`%v is not the same as %v, the capital letters were not removed`, actual, want)
+    }
+}
