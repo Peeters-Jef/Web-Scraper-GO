@@ -42,4 +42,9 @@ func crawl(url string, visited map[string]bool) {
         fmt.Println("Error:", err)
         return
     }
+
+    if resp.StatusCode != http.StatusOK {
+        fmt.Println("Error:", resp.StatusCode)
+        return
+    }
 }
