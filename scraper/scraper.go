@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"golang.org/x/net/html"
 )
 
 func NormalizeURL(rawUrl string) string {
@@ -29,7 +31,7 @@ func NormalizeURL(rawUrl string) string {
     return normalizedURL
 }
 
-func crawl(url string, visited map[string]bool) {
+func Crawl(url string, visited map[string]bool) {
     if visited[url] {
         return
     }
@@ -47,4 +49,20 @@ func crawl(url string, visited map[string]bool) {
         fmt.Println("Error:", resp.StatusCode)
         return
     }
+}
+
+func extractLinks(n *html.Node) []string {
+    var links []string
+
+    if n.Type == html.ElementNode && n.Data == "a" {
+        for _, attr := range n.Attr {
+            if attr.Key == "href" {
+                links = append(links, attr.Val)
+            }
+        }
+    }
+    for child := n.FirstChild; child != nil; child = child.NextSibling {
+        links = append(links, extractLinks(child)...)
+    } 
+    return links
 }
