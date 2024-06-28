@@ -31,15 +31,12 @@ func NormalizeURL(rawUrl string) string {
     return normalizedURL
 }
 
-func Crawl(url string, visited map[string]bool) {
-    if visited[url] {
+func Crawl(urlString, baseDomain string, visited map[string]bool) {
+    if visited[urlString] {
         return
     }
 
-    visited[url] = true
-    fmt.Println("Visiting:", url)
-
-    resp, err := http.Get(url)
+    resp, err := http.Get(urlString)
     if err != nil {
         fmt.Println("Get Error:", err)
         return
@@ -56,14 +53,23 @@ func Crawl(url string, visited map[string]bool) {
         return
     }
 
+    visited[urlString] = true
+    fmt.Println("Visiting:", urlString)
+
+    baseURL := urlString
     links := extractLinks(doc)
 
     for _, link := range links {
-        resolvedLink := resolveURL(link, url)
+        resolvedLink := resolveURL(link, baseURL)
         normalizedURL := NormalizeURL(resolvedLink)
 
+        parsedResolvedLink, err := url.Parse(resolvedLink)
+        if err != nil || parsedResolvedLink.Host != baseDomain {
+            continue
+        }
+
         if !visited[normalizedURL] {
-            Crawl(resolvedLink, visited)
+            Crawl(resolvedLink, baseDomain, visited)
         }
     }
 }

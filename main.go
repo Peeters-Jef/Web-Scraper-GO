@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"net/url"
 	"os"
 	"webscraper/scraper"
 )
@@ -16,6 +17,9 @@ func main() {
         return
     }
 
+    parsedURL, err := url.Parse(string(baseURL))
+    baseDomain := parsedURL.Host
+
     visitedLinks := make(map[string]bool)
-    scraper.Crawl(string(baseURL), visitedLinks)
+    scraper.Crawl(string(baseURL), baseDomain, visitedLinks)
 }
