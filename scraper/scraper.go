@@ -49,6 +49,14 @@ func Crawl(url string, visited map[string]bool) {
         fmt.Println("Error:", resp.StatusCode)
         return
     }
+
+    doc, err := html.Parse(resp.Body)
+    if err != nil {
+        fmt.Println("Error parsing HTML:", err)
+        return
+    }
+
+    links := extractLinks(doc)
 }
 
 func extractLinks(n *html.Node) []string {
@@ -65,4 +73,17 @@ func extractLinks(n *html.Node) []string {
         links = append(links, extractLinks(child)...)
     } 
     return links
+}
+
+func resolveURL(href, baseURL string) string {
+    u, err := url.Parse(href)
+    if err != nil {
+        return ""
+    }
+    baseU, err := url.Parse(baseURL)
+    if err != nil {
+        return ""
+    }
+
+    return baseU.ResolveReference(u).String()
 }
