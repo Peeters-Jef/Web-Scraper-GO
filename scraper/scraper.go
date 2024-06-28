@@ -41,12 +41,12 @@ func Crawl(url string, visited map[string]bool) {
 
     resp, err := http.Get(url)
     if err != nil {
-        fmt.Println("Error:", err)
+        fmt.Println("Get Error:", err)
         return
     }
 
     if resp.StatusCode != http.StatusOK {
-        fmt.Println("Error:", resp.StatusCode)
+        fmt.Println("Status Error:", resp.StatusCode)
         return
     }
 
@@ -57,6 +57,15 @@ func Crawl(url string, visited map[string]bool) {
     }
 
     links := extractLinks(doc)
+
+    for _, link := range links {
+        resolvedLink := resolveURL(link, url)
+        normalizedURL := NormalizeURL(resolvedLink)
+
+        if !visited[normalizedURL] {
+            Crawl(resolvedLink, visited)
+        }
+    }
 }
 
 func extractLinks(n *html.Node) []string {
